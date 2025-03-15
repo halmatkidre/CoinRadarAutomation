@@ -1,10 +1,12 @@
 name: Run Coin Radar Automation
 
 on:
-workflow_dispatch:
+  push:
+    branches:
+      - main  # Runs when you push to the main branch
+  workflow_dispatch:  # Allows manual execution
   schedule:
     - cron: "0 */4 * * *"  # Runs every 4 hours (adjust as needed)
-  workflow_dispatch:  # Allows manual execution
 
 jobs:
   run-script:
@@ -16,13 +18,11 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"  # Ensure it's the correct version
+          python-version: "3.12"  # Make sure the version is correct
 
       - name: Install Dependencies
         run: |
           pip install selenium schedule requests openai
-          
+
       - name: Run Coin Radar Script
         run: python coin_radar.py
-
-
