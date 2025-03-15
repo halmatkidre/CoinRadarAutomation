@@ -1,6 +1,7 @@
 name: Run Coin Radar Automation
 
 on:
+workflow_dispatch:
   schedule:
     - cron: "0 */4 * * *"  # Runs every 4 hours (adjust as needed)
   workflow_dispatch:  # Allows manual execution
