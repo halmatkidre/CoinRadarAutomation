@@ -1,3 +1,5 @@
+# Force update to trigger GitHub Actions detection
+
 name: Run Coin Radar Automation
 
 on:
