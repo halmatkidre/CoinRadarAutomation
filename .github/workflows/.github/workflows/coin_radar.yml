@@ -2,7 +2,7 @@ name: Run Coin Radar Automation
 
 on:
   schedule:
-    - cron: "0 */4 * * *"  # Runs every 4 hours
+    - cron: "0 */4 * * *"  # Runs every 4 hours (adjust as needed)
   workflow_dispatch:  # Allows manual execution
 
 jobs:
@@ -16,11 +16,11 @@ jobs:
       - name: Set Up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
+          python-version: "3.12"  # Ensure it's the correct version
 
       - name: Install Dependencies
         run: |
-          pip install selenium schedule  # Ensures required packages are installed
+          pip install selenium schedule  # Installs required packages
 
       - name: Run Coin Radar Script
         run: python coin_radar.py
