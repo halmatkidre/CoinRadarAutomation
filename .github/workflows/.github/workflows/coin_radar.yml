@@ -20,7 +20,7 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install -r requirements.txt
+          pip install selenium schedule  # Installs required packages
 
       - name: Run Coin Radar Script
         run: python coin_radar.py
