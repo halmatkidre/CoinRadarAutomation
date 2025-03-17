@@ -1,24 +1,30 @@
 name: Coin Radar Automation
 
 on:
+  schedule:
+    - cron: "15 */4 * * *"  # Runs every 4 hours at the 15th minute
+    - cron: "45 */4 * * *"  # Runs 30 minutes after the first run in the cycle
+
   push:
     branches:
-      - main
-  workflow_dispatch:
+      - main  # Also runs when changes are pushed to the main branch
+  workflow_dispatch:  # Allows you to trigger the workflow manually
 
 jobs:
   run-automation:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Step 2: Debug: Print directory structure to verify
       - name: Debug Directory Structure
         run: |
           pwd
           ls -R
 
-      - name: Run Coin Radar Script with Logging
+      # Step 3: Run the Coin Radar script
+      - name: Run Coin Radar Script
         run: python src/coin_radar.py
-        continue-on-error: true  # Allow the job to continue even if an error occurs
