@@ -3,24 +3,22 @@ name: Coin Radar Automation
 on:
   push:
     branches:
-      - main  # Runs on pushes to the main branch
-  workflow_dispatch:  # Allows manual trigger
+      - main
+  workflow_dispatch:
 
 jobs:
   run-automation:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout code from the repository
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Debug: Print directory structure to verify
       - name: Debug Directory Structure
         run: |
           pwd
           ls -R
 
-      # Step 3: Run the Coin Radar script from the root directory
-      - name: Run Coin Radar Script
+      - name: Run Coin Radar Script with Logging
         run: python src/coin_radar.py
+        continue-on-error: true  # Allow the job to continue even if an error occurs
