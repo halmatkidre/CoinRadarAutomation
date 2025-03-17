@@ -3,7 +3,7 @@ name: Coin Radar Automation
 on:
   push:
     branches:
-      - main  # Or the branch you're working on
+      - main
   workflow_dispatch:
 
 jobs:
@@ -14,13 +14,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Debug: Print directory structure for verification
-      - name: Debug Directory
+      # Debugging: Print directory structure to verify
+      - name: Debug Directory Structure
         run: |
           pwd
           ls -R
 
-      # Run the Python script from the "src" folder
+      # Run the Coin Radar script in the 'src' folder
       - name: Run Coin Radar Script
         run: python src/coin_radar.py
-
