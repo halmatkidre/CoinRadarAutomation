@@ -1,14 +1,18 @@
 name: Coin Radar Automation
 
 on:
+  # Schedule to run every 4 hours (adjust as needed)
   schedule:
     - cron: "15 0,4,8,12,16,20 * * *"  # Runs at 00:15, 04:15, 08:15, etc.
-    - cron: "45 0,4,8,12,16,20 * * *"  # Runs 30 minutes after the first run
+    - cron: "45 0,4,8,12,16,20 * * *"  # Adds a second run 30 minutes later
 
+  # Trigger workflow on push to main branch
   push:
     branches:
-      - main  # Triggers on push to the main branch
-  workflow_dispatch:  # Allows manual trigger via GitHub Actions tab
+      - main
+
+  # Allow manual trigger via GitHub Actions tab
+  workflow_dispatch:
 
 jobs:
   run-automation:
@@ -19,12 +23,24 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Step 2: Debug: Print directory structure to verify
+      # Step 2: Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"  # Ensure Python 3.9 is used
+
+      # Step 3: Install dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Assumes you have a requirements.txt file
+
+      # Step 4: Debug: Print directory structure (Optional, useful for troubleshooting)
       - name: Debug Directory Structure
         run: |
           pwd
           ls -R
 
-      # Step 3: Run the Coin Radar script
+      # Step 5: Run the Coin Radar script
       - name: Run Coin Radar Script
         run: python src/coin_radar.py
