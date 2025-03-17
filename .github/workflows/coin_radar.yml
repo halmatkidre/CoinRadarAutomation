@@ -23,4 +23,4 @@ jobs:
 
       # Step 3: Run the Coin Radar script from the root directory
       - name: Run Coin Radar Script
-        run: python coin_radar.py
+        run: python src/coin_radar.py
