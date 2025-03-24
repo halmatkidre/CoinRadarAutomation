@@ -25,6 +25,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
 
+      # Create a symlink so "/usr/bin/google-chrome" points to Chromium
+      - name: Symlink Chromium to google-chrome
+        run: sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
+
       - name: Install Dependencies
         run: |
           pip install selenium schedule requests openai
