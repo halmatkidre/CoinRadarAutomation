@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 
 # Function to clean text and remove unsupported characters
 def clean_text(text):
@@ -20,33 +21,22 @@ openai.api_key = OPENAI_API_KEY
 
 print("🚀 Coin Radar Automation Started!")
 
-# Configure Chrome options
-options = webdriver.ChromeOptions()
-options.add_argument("--disable-dev-shm-usage")  # Stabilize memory usage
-options.add_argument("--no-sandbox")            # Run without sandboxing
-options.add_argument("--disable-extensions")    # Disable browser extensions
-options.add_argument("--disable-gpu")           # Reduce GPU usage
+# Configure Chrome options (headless for GitHub Actions)
+options = Options()
+options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-extensions")
+options.add_argument("--disable-gpu")
 options.add_argument("--remote-debugging-port=9222")
 options.add_argument("--log-level=0")
 options.add_argument("--verbose")
+options.add_argument("--headless")  # headless mode
 
-# Ensure correct profile path
-profile_path = "C:/Users/Halma/Projects/Selenium/automation_profile"
-if os.path.exists(profile_path):
-    print(f"✅ Profile path exists: {profile_path}")
-else:
-    print(f"⚠️ Profile path does not exist: {profile_path}. Creating...")
-    os.makedirs(profile_path)
-
-options.add_argument(f"user-data-dir={profile_path}")
-
-chromedriver_path = "C:/Users/Halma/Projects/Selenium/drivers/chromedriver.exe"
-
-# Initialize WebDriver
+# Initialize WebDriver in headless mode
 try:
     print("⏳ Initializing WebDriver...")
-    service = Service(chromedriver_path, service_args=["--verbose", "--log-path=chromedriver.log"])
-    driver = webdriver.Chrome(service=service, options=options)
+
+    driver = webdriver.Chrome(options=options)
     print("✅ WebDriver initialized successfully!")
 
     # Navigate directly to tweet composition
@@ -72,9 +62,12 @@ def fetch_crypto_insights():
         data = response.json()
         active_cryptos = data['data']['active_cryptocurrencies']
         market_cap = round(data['data']['total_market_cap']['usd'] / 1e9, 2)  # Convert to billions
-        volume_24h = round(data['data']['total_volume']['usd'] / 1e9, 2)  # Convert to billions
+        volume_24h = round(data['data']['total_volume']['usd'] / 1e9, 2)     # Convert to billions
         print(f"✅ Insights: Active Cryptos - {active_cryptos}, Market Cap - ${market_cap}B, Volume 24H - ${volume_24h}B")
-        return f"There are currently {active_cryptos} active cryptocurrencies. The total market cap is ${market_cap}B, with a 24-hour trading volume of ${volume_24h}B."
+        return (
+            f"There are currently {active_cryptos} active cryptocurrencies. "
+            f"The total market cap is ${market_cap}B, with a 24-hour trading volume of ${volume_24h}B."
+        )
     except requests.exceptions.RequestException as e:
         print(f"⚠️ Error fetching insights: {e}")
         return None
@@ -112,6 +105,10 @@ def post_tweet_selenium(tweet_text):
     tweet_text = clean_text(tweet_text)
     print(f"DEBUG: Cleaned tweet text: {tweet_text}")
 
+    if not driver:
+        print("⚠️ WebDriver not available!")
+        return
+
     print("🐦 Posting tweet to Twitter...")
     try:
         # Locate the tweet box
@@ -119,7 +116,7 @@ def post_tweet_selenium(tweet_text):
         tweet_box = WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.XPATH, '//div[@role="textbox"]'))
         )
-        tweet_box.clear()  # Ensure the box is cleared
+        tweet_box.clear()
         tweet_box.send_keys(tweet_text)
         print("✅ Tweet text entered.")
 
