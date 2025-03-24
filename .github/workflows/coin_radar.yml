@@ -2,10 +2,11 @@ name: Run Coin Radar Automation
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
   schedule:
-    - cron: "0 */8 * * *"  # every 8 hours
+    - cron: "0 */8 * * *"
 
 jobs:
   run-script:
@@ -29,21 +30,17 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
 
-      # 2) Download & Install Matching ChromeDriver
+      # 2) Download *latest* ChromeDriver (rather than matching major version)
       - name: Install ChromeDriver
         run: |
-          # Extract the major version of Google Chrome (e.g. 134)
-          CHROME_VERSION=$(google-chrome --version | grep -Po '(?<=Google Chrome )\d+')
-          # Get matching ChromeDriver version from storage.googleapis.com
-          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}")
-          echo "Chrome major version: $CHROME_VERSION"
-          echo "ChromeDriver matching version: $CHROMEDRIVER_VERSION"
+          # Instead of LATEST_RELEASE_134, just get LATEST_RELEASE
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
+          echo "Using latest ChromeDriver version: $CHROMEDRIVER_VERSION"
 
-          # Download and install ChromeDriver
           wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/bin/chromedriver
-          sudo chmod +x /usr/bin/chromedriver
+          sudo mv chromedriver /usr/local/bin/chromedriver
+          sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Install Dependencies
         run: |
