@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: "0 */8 * * *"
+    - cron: "0 */8 * * *"  # every 8 hours
 
 jobs:
   run-script:
@@ -20,27 +20,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      # 1) Install Google Chrome
-      - name: Install Google Chrome
+      - name: Install Chromium
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget gnupg unzip
-          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
-
-      # 2) Download *latest* ChromeDriver (rather than matching major version)
-      - name: Install ChromeDriver
-        run: |
-          # Instead of LATEST_RELEASE_134, just get LATEST_RELEASE
-          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE")
-          echo "Using latest ChromeDriver version: $CHROMEDRIVER_VERSION"
-
-          wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
-          unzip chromedriver_linux64.zip
-          sudo mv chromedriver /usr/local/bin/chromedriver
-          sudo chmod +x /usr/local/bin/chromedriver
+          sudo apt-get install -y chromium-browser chromium-chromedriver
 
       - name: Install Dependencies
         run: |
