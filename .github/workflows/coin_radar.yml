@@ -20,11 +20,24 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Install Chrome & ChromeDriver
+      - name: Install Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget gnupg
+          wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+          sudo sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+          sudo apt-get update
+          sudo apt-get install -y google-chrome-stable
+          sudo apt-get install -y chromium-chromedriver
+          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+
       - name: Install Dependencies
         run: |
           pip install selenium schedule requests openai
 
       - name: Run Coin Radar Script
         env:
+          # Must match the secret name in repo Settings > Secrets > Actions
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python coin_radar.py
