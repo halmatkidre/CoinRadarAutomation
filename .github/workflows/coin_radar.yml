@@ -2,11 +2,10 @@ name: Run Coin Radar Automation
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: "0 */8 * * *"  # Runs every 8 hours (3 times per day)
+    - cron: "0 */8 * * *"  # every 8 hours
 
 jobs:
   run-script:
@@ -20,17 +19,31 @@ jobs:
         with:
           python-version: "3.12"
 
-      # Install Chrome & ChromeDriver
-      - name: Install Chrome
+      # 1) Install Google Chrome
+      - name: Install Google Chrome
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget gnupg
+          sudo apt-get install -y wget gnupg unzip
           wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
           sudo sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
           sudo apt-get update
           sudo apt-get install -y google-chrome-stable
-          sudo apt-get install -y chromium-chromedriver
-          sudo ln -s /usr/lib/chromium-browser/chromedriver /usr/bin/chromedriver
+
+      # 2) Download & Install Matching ChromeDriver
+      - name: Install ChromeDriver
+        run: |
+          # Extract the major version of Google Chrome (e.g. 134)
+          CHROME_VERSION=$(google-chrome --version | grep -Po '(?<=Google Chrome )\d+')
+          # Get matching ChromeDriver version from storage.googleapis.com
+          CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}")
+          echo "Chrome major version: $CHROME_VERSION"
+          echo "ChromeDriver matching version: $CHROMEDRIVER_VERSION"
+
+          # Download and install ChromeDriver
+          wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/bin/chromedriver
+          sudo chmod +x /usr/bin/chromedriver
 
       - name: Install Dependencies
         run: |
@@ -38,6 +51,5 @@ jobs:
 
       - name: Run Coin Radar Script
         env:
-          # Must match the secret name in repo Settings > Secrets > Actions
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python coin_radar.py
