@@ -1,0 +1,42 @@
+# System directories and files
+Application Data/
+Cookies/
+Local Settings/
+My Documents/
+NetHood/
+PrintHood/
+Recent/
+SendTo/
+Start Menu/
+Templates/
+*.DAT
+*.LOG*
+desktop.ini
+ntuser.ini
+
+# Python-related files
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE and editor configuration files
+.vscode/
+.spyder-py3/
+.anaconda/
+.wdm/
+.cache/
+.conda/
+.condarc
+.ipython/
+
+# Environment-related files and folders
+venv/
+env/
+*.env
+
+# User or system-specific files
+AppData/
+anaconda3/
+iCloudDrive/
+ntuser.dat.LOG1
+ntuser.dat.LOG2

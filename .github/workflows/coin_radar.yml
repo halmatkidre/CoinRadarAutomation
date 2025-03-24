@@ -1,28 +1,46 @@
-name: Run Coin Radar Automation
+name: Coin Radar Automation
 
 on:
+  # Schedule the workflow to run every 4 hours with slight intervals
+  schedule:
+    - cron: "15 0,4,8,12,16,20 * * *"  # Runs at 00:15, 04:15, etc.
+    - cron: "45 0,4,8,12,16,20 * * *"  # Adds another run 30 minutes later
+
+  # Trigger workflow on code pushes to the main branch
   push:
     branches:
-      - main  # Runs when you push to the main branch
-  workflow_dispatch:  # Allows manual execution
-  schedule:
-    - cron: "0 */4 * * *"  # Runs every 4 hours (adjust as needed)
+      - main
+
+  # Allow manual execution via GitHub Actions
+  workflow_dispatch:
 
 jobs:
-  run-script:
+  run-automation:
     runs-on: ubuntu-latest
+
     steps:
+      # Step 1: Checkout the code from the repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Step 2: Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"  # Make sure the version is correct
+          python-version: "3.9"  # Use Python 3.9 or a version compatible with your script
 
-      - name: Install Dependencies
+      # Step 3: Install necessary dependencies
+      - name: Install dependencies
         run: |
-          pip install selenium schedule requests openai
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Assumes a `requirements.txt` file in your repo
 
+      # Step 4: Debug - Check the directory structure (Optional)
+      - name: Debug directory structure
+        run: |
+          pwd  # Print working directory
+          ls -R  # List all files recursively for debugging purposes
+
+      # Step 5: Execute the Coin Radar script
       - name: Run Coin Radar Script
-        run: python coin_radar.py
+        run: python src/coin_radar.py  # Assumes the script is in the `src` folder
