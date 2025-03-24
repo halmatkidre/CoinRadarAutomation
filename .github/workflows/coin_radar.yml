@@ -6,7 +6,7 @@ on:
       - main
   workflow_dispatch:
   schedule:
-    - cron: "0 */8 * * *"  # every 8 hours
+    - cron: "0 */8 * * *"  # every 8 hours (3 times per day)
 
 jobs:
   run-script:
@@ -25,10 +25,6 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y chromium-browser chromium-chromedriver
 
-      # Create a symlink so "/usr/bin/google-chrome" points to Chromium
-      - name: Symlink Chromium to google-chrome
-        run: sudo ln -sf /usr/bin/chromium-browser /usr/bin/google-chrome
-
       - name: Install Dependencies
         run: |
           pip install selenium schedule requests openai
@@ -36,4 +32,6 @@ jobs:
       - name: Run Coin Radar Script
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          TWITTER_USER: ${{ secrets.TWITTER_USER }}
+          TWITTER_PASS: ${{ secrets.TWITTER_PASS }}
         run: python coin_radar.py
