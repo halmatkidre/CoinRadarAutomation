@@ -25,4 +25,6 @@ jobs:
           pip install selenium schedule requests openai
 
       - name: Run Coin Radar Script
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: python coin_radar.py
