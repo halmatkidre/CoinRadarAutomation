@@ -21,8 +21,9 @@ openai.api_key = OPENAI_API_KEY
 
 print("🚀 Coin Radar Automation Started!")
 
-# Configure Chrome options (headless for GitHub Actions)
+# Configure Chrome/Chromium options for headless GitHub Actions
 options = Options()
+options.binary_location = "/usr/bin/chromium-browser"  # Tell Selenium exactly where Chromium is
 options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-extensions")
